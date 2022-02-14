@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>{% block title %}Edit "{{ item['title'] }}"{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="title">Title</label>
+    <input name="title" id="title" value="{{ request.form['title'] or item['title'] }}" required>
+    <label for="description">Description</label>
+    <input name="description" id="description" value="{{ request.form['description'] or item['description'] }}" required>
+    <div class="flex-nowrap">
+      <input type="submit" class="btn btn-primary" value="Save">
+      <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+  </div>
+  </form>
+{% endblock %}
