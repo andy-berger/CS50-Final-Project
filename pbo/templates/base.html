@@ -18,10 +18,11 @@
         <ul>
           {% if g.user %}
             <li><span>{{ g.user['username'] }}</span>
-            <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+            <li><a href="/settings">Settings</a>
+            <li><a href="{{ url_for('auth.logout') }}">Log out</a>
           {% else %}
             <li><a href="{{ url_for('auth.register') }}">Register</a>
-            <li><a href="{{ url_for('auth.login') }}">Log In</a>
+            <li><a href="{{ url_for('auth.login') }}">Log in</a>
           {% endif %}
         </ul>
       </div>

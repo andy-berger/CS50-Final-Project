@@ -1,15 +1,50 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h2>{% block title %}New Item{% endblock %}</h2>
+  <h2>{% block title %}New item{% endblock %}</h2>
 {% endblock %}
 
 {% block content %}
   <form method="post">
-    <label for="title">Title</label>
-    <input name="title" id="title" value="{{ request.form['title'] }}" required>
+    <label for="name">Name</label>
+    <input name="name" id="name" value="{{ request.form['name'] }}" required>
     <label for="description">Description</label>
-    <input name="description" id="description" value="{{ request.form['description'] }}" required>
-    <input type="submit" class="btn btn-primary" value="Save">
+    <input name="description" id="description" value="{{ request.form['description'] }}">
+    <label for="category">Category</label>
+    <select name="category" id="categories">
+      {% for category in categories %}
+        {% if (category['id'] == 1) %}
+        <option name="category" value="{{ category['id'] }}" type="text" selected>{{ category['name'] }}</option>
+        {% else %}
+        <option name="category" value="{{ category['id'] }}" type="text">{{ category['name'] }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    <label for="room">Room</label>
+    <select name="room" id="rooms">
+    {% for room in rooms %}
+      {% if (room['id'] == 1) %}
+      <option name="room" value="{{ room['id'] }}" type="text" selected>{{ room['name'] }}</option>
+      {% else %}
+      <option name="room" value="{{ room['id'] }}" type="text">{{ room['name'] }}</option>
+      {% endif %}
+    {% endfor %}
+    </select>
+    <label for="manufacturer">Manufacturer</label>
+    <select name="manufacturer" id="manufacturers">
+    {% for manufacturer in manufacturers %}
+      {% if (manufacturer['id'] == 1) %}
+      <option name="manufacturer" value="{{ manufacturer['id'] }}" type="text" selected>{{ manufacturer['name'] }}</option>
+      {% else %}
+      <option name="manufacturer" value="{{ manufacturer['id'] }}" type="text">{{ manufacturer['name'] }}</option>
+      {% endif %}
+    {% endfor %}
+    </select>
+    <label for="model">Model</label>
+    <input name="model" id="model" value="{{ request.form['model'] }}">
+    <div class="flex-nowrap">
+      <input type="submit" class="btn btn-primary" value="Save">
+      <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+    </div>
   </form>
 {% endblock %}

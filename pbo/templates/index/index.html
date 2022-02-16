@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Items{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('index.create') }}">Add item</a>
+  <h1>{% block title %}Items{% endblock %}</h1>
+    <a class="action" href="{{ url_for('index.create') }}"><img alt="Add item" src="{{ url_for('static', filename='add.png') }}" width="126.3" height="35"></a>
   {% endif %}
 {% endblock %}
 
@@ -14,18 +14,26 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Created</th>
+            <th>Name</th>
             <th>Description</th>
+            <th>Manufacturer</th>
+            <th>Model</th>
+            <th>Category</th>
+            <th>Room</th>
+            <th>Created</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {% for item in items %}
           <tr>
-            <td>{{ item['title'] }}</td>
-            <td>{{ item['created'].strftime('%Y-%m-%d') }}</td>
+            <td>{{ item['name'] }}</td>
             <td>{{ item['description'] }}</td>
+            <td>{{ item['manufacturer_name'] }}</td>
+            <td>{{ item['model'] }}</td>
+            <td>{{ item['category_name'] }}</td>
+            <td>{{ item['room_name'] }}</td>
+            <td>{{ item['created'].strftime('%Y-%m-%d') }}</td>
             <td>
               <div class="row">
                 <div class="col-auto">
@@ -44,7 +52,7 @@
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="deleteEntryModalLabel">Are you sure you want to delete entry "{{ item['title'] }}"?</h5>
+                          <h5 class="modal-title" id="deleteEntryModalLabel">Are you sure you want to delete item "{{ item['name'] }}"?</h5>
                         </div>
                         <div class="modal-footer">
                           <form>
