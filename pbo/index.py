@@ -166,6 +166,7 @@ def update(id):
         (item['id'],)
     ).fetchone()
 
+    form = UploadForm()
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
@@ -175,22 +176,42 @@ def update(id):
         model = request.form['model']
         error = None
 
+        if form.file.data == None:
+            filename = None
+        else:
+            if allowed_file(form.file.data.filename):
+                filename =  secure_filename(form.file.data.filename)
+            else:
+                filename = None
+                error = 'File type not allowed.'
+            data = form.file.data.read()            
+
         if not name:
             error = 'Name is required.'
 
         if error is not None:
             flash(error)
         
-        db = get_db()
-        db.execute(
-            'UPDATE items SET name = ?, description = ?, category_id = ?, room_id = ?, manufacturer_id = ?, model = ?'
-            ' WHERE id = ?',
-            (name, description, category, room, manufacturer, model, id)
-        )
-        db.commit()
-        return redirect(url_for('index.index'))
+        if filename == None:
+            db = get_db()
+            db.execute(
+                'UPDATE items SET name = ?, description = ?, category_id = ?, room_id = ?, manufacturer_id = ?, model = ?'
+                ' WHERE id = ?',
+                (name, description, category, room, manufacturer, model, id)
+            )
+            db.commit()
+            return redirect(url_for('index.index'))
+        else:
+            db = get_db()
+            db.execute(
+                'UPDATE items SET name = ?, description = ?, category_id = ?, room_id = ?, manufacturer_id = ?, model = ?, manual_filename = ?, manual = ?'
+                ' WHERE id = ?',
+                (name, description, category, room, manufacturer, model, filename, data, id)
+            )
+            db.commit()
+            return redirect(url_for('index.index')) 
 
-    return render_template('index/update.html', item=item, categories=categories, current_category=current_category, rooms=rooms, current_room=current_room, manufacturers=manufacturers, current_manufacturer=current_manufacturer)
+    return render_template('index/update.html', item=item, categories=categories, current_category=current_category, rooms=rooms, current_room=current_room, manufacturers=manufacturers, current_manufacturer=current_manufacturer, form=form)
 
 
 @bp.route('/<int:id>/delete', methods=('POST',))
