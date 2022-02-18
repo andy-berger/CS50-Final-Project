@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     <label for="name">Name</label>
     <input name="name" id="name" value="{{ request.form['name'] }}" required>
     <label for="description">Description</label>
@@ -42,6 +42,9 @@
     </select>
     <label for="model">Model</label>
     <input name="model" id="model" value="{{ request.form['model'] }}">
+    <label for="manual">User manual</label>
+      {{ form.hidden_tag() }}
+      {{ form.file() }}
     <div class="flex-nowrap">
       <input type="submit" class="btn btn-primary" value="Save">
       <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>

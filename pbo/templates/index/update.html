@@ -9,7 +9,7 @@
     <label for="name">Name</label>
     <input name="name" id="name" value="{{ request.form['name'] or item['name'] }}" required>
     <label for="description">Description</label>
-    <input name="description" id="description" value="{{ request.form['description'] or item['description'] }}" required>
+    <input name="description" id="description" value="{{ request.form['description'] or item['description'] }}">
     <label for="category">Category</label>
     <select name="category" id="categories">
       {% for category in categories %}
@@ -42,6 +42,8 @@
     </select>
     <label for="model">Model</label>
     <input name="model" id="model" value="{{ request.form['model'] or item['model'] }}">
+    <label for="manual">User manual</label>
+    <span style="white-space: nowrap"><a href="{{ url_for('index.uploadmanual', id=item['id']) }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Upload</a> Note: this will open a new tab.</span>
     <div class="flex-nowrap">
       <input type="submit" class="btn btn-primary" value="Save">
       <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>

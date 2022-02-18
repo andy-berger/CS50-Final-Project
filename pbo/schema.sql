@@ -19,6 +19,7 @@ CREATE TABLE items (
   description TEXT,
   manufacturer_id INTEGER,
   model TEXT,
+  manual_filename TEXT,
   manual BLOB,
   FOREIGN KEY (user_id) REFERENCES user (id),
   FOREIGN KEY (category_id) REFERENCES categories (id),

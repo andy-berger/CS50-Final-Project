@@ -20,8 +20,9 @@
             <th>Model</th>
             <th>Category</th>
             <th>Room</th>
+            <th>User manual</th>
             <th>Created</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -33,7 +34,43 @@
             <td>{{ item['model'] }}</td>
             <td>{{ item['category_name'] }}</td>
             <td>{{ item['room_name'] }}</td>
-            <td>{{ item['created'].strftime('%Y-%m-%d') }}</td>
+            <td>
+            {% if item['manual_filename'] %}
+            <div class="row">
+              <div class="col-auto">
+                <form action="{{ url_for('index.download', id=item['id']) }}" method="POST">
+                  {{ form.download(class="btn btn-primary btn-sm") }}
+                </form>
+              </div>
+              <div class="col-auto">
+                <!-- Button trigger modal -->
+                <!-- Button is placed inside a form to place it aligned to the previous form -->
+                  <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteManualModal-{{ item['id'] }}">Remove</button>
+                <!-- Modal -->
+                <div class="modal fade" id="deleteManualModal-{{ item['id'] }}" tabindex="-1" aria-labelledby="deleteManualModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="deleteManualModalLabel">Are you sure you want to delete the user manual for item "{{ item['name'] }}"?</h5>
+                      </div>
+                      <div class="modal-footer">
+                        <form>
+                          <input type="submit" class="btn btn-secondary me-1" value="No, cancel" data-bs-dismiss="modal">
+                        </form>
+                        <form action="{{ url_for('index.deletemanual', id=item['id']) }}" method="post">
+                          <input type="submit" class="btn btn-danger" value="Yes, delete">
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% else %}
+              <a href="{{ url_for('index.uploadmanual', id=item['id']) }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">Upload</a>
+            {% endif %}
+            </td>
+          <td>{{ item['created'].strftime('%Y-%m-%d') }}</td>
             <td>
               <div class="row">
                 <div class="col-auto">

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>{% block title %}Upload user manual for "{{ item['name'] }}"{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% if item['manual_filename'] %}
+      <span style="white-space: nowrap">Current user manual: <b>{{ item['manual_filename'] }}</b></span>
+      If you want to upload a new user manual which replaces the current one, click "Choose File" below:
+    {% endif %}
+    {{ form.hidden_tag() }}
+    {{ form.file() }}
+    <div class="flex-nowrap">
+      <input type="submit" class="btn btn-primary" value="Save">
+      <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+{% endblock %}
