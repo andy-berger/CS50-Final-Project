@@ -38,7 +38,7 @@
             {% if item['manual_filename'] %}
             <div class="row">
               <div class="col-auto">
-                <form action="{{ url_for('index.download', id=item['id']) }}" method="POST">
+                <form action="{{ url_for('index.downloadmanual', id=item['id']) }}" method="POST">
                   {{ form.download(class="btn btn-primary btn-sm") }}
                 </form>
               </div>

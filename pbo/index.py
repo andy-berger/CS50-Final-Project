@@ -2,6 +2,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, send_file
 )
 from werkzeug.exceptions import abort
+from werkzeug.utils import secure_filename
 
 from pbo.auth import login_required
 from pbo.db import get_db
@@ -10,7 +11,37 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField
 from wtforms import SubmitField
 
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
 bp = Blueprint('index', __name__)
+
+
+def get_item(id, check_user=True):
+    item = get_db().execute(
+        'SELECT i.id, name, description, model, manual_filename, created, user_id, username'
+        ' FROM items i JOIN user u ON i.user_id = u.id'
+        ' WHERE i.id = ?',
+        (id,)
+    ).fetchone()
+
+    if item is None:
+        abort(404, "Item id {0} doesn't exist.".format(id))
+
+    if check_user and item['user_id'] != g.user['id']:
+        abort(403)
+
+    return item
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+class UploadForm(FlaskForm):
+    file = FileField()
+    submit = SubmitField("Submit")
+    download = SubmitField("Download")
 
 
 @bp.route('/')
@@ -42,7 +73,11 @@ def create():
             if form.file.data == None:
                 filename = None
             else:
-                filename = form.file.data.filename
+                if allowed_file(form.file.data.filename):
+                    filename =  secure_filename(form.file.data.filename)
+                else:
+                    filename = None
+                    error = 'File type not allowed.'
                 data = form.file.data.read()
         
         if not name:
@@ -89,29 +124,6 @@ def create():
     return render_template('index/create.html', categories=categories, rooms=rooms, manufacturers=manufacturers, form=form)
 
 
-def get_item(id, check_user=True):
-    item = get_db().execute(
-        'SELECT i.id, name, description, model, manual_filename, created, user_id, username'
-        ' FROM items i JOIN user u ON i.user_id = u.id'
-        ' WHERE i.id = ?',
-        (id,)
-    ).fetchone()
-
-    if item is None:
-        abort(404, "Item id {0} doesn't exist.".format(id))
-
-    if check_user and item['user_id'] != g.user['id']:
-        abort(403)
-
-    return item
-
-
-class UploadForm(FlaskForm):
-    file = FileField()
-    submit = SubmitField("Submit")
-    download = SubmitField("Download")
-
-
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
@@ -154,7 +166,6 @@ def update(id):
         (item['id'],)
     ).fetchone()
 
-    form = UploadForm()
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
@@ -164,38 +175,22 @@ def update(id):
         model = request.form['model']
         error = None
 
-        if form.file.data == None:
-            filename = None
-        else:
-            filename = form.file.data.filename
-            data = form.file.data.read()
-
         if not name:
             error = 'Name is required.'
 
         if error is not None:
             flash(error)
         
-        if filename == None:
-            db = get_db()
-            db.execute(
-                'UPDATE items SET name = ?, description = ?, category_id = ?, room_id = ?, manufacturer_id = ?, model = ?'
-                ' WHERE id = ?',
-                (name, description, category, room, manufacturer, model, id)
-            )
-            db.commit()
-            return redirect(url_for('index.index'))
-        else:
-            db = get_db()
-            db.execute(
-                'UPDATE items SET name = ?, description = ?, category_id = ?, room_id = ?, manufacturer_id = ?, model = ?, manual_filename = ?, manual = ?'
-                ' WHERE id = ?',
-                (name, description, category, room, manufacturer, model, filename, data, id)
-            )
-            db.commit()
-            return redirect(url_for('index.index'))
+        db = get_db()
+        db.execute(
+            'UPDATE items SET name = ?, description = ?, category_id = ?, room_id = ?, manufacturer_id = ?, model = ?'
+            ' WHERE id = ?',
+            (name, description, category, room, manufacturer, model, id)
+        )
+        db.commit()
+        return redirect(url_for('index.index'))
 
-    return render_template('index/update.html', item=item, categories=categories, current_category=current_category, rooms=rooms, current_room=current_room, manufacturers=manufacturers, current_manufacturer=current_manufacturer, form=form)
+    return render_template('index/update.html', item=item, categories=categories, current_category=current_category, rooms=rooms, current_room=current_room, manufacturers=manufacturers, current_manufacturer=current_manufacturer)
 
 
 @bp.route('/<int:id>/delete', methods=('POST',))
@@ -207,15 +202,9 @@ def delete(id):
     return redirect(url_for('index.index'))
 
 
-@bp.route('/settings')
+@bp.route('/<int:id>/downloadmanual', methods=('GET', 'POST'))
 @login_required
-def settings():
-    return render_template('index/settings.html')
-
-
-@bp.route('/<int:id>/download', methods=('GET', 'POST'))
-@login_required
-def download(id):
+def downloadmanual(id):
     item = get_item(id)
     form = UploadForm()
     if request.method == "POST":
@@ -244,7 +233,11 @@ def uploadmanual(id):
         if form.file.data == None:
             filename = None
         else:
-            filename = form.file.data.filename
+            if allowed_file(form.file.data.filename):
+                filename =  secure_filename(form.file.data.filename)
+            else:
+                filename = None
+                error = 'File type not allowed.'
             data = form.file.data.read()
 
         if error is not None:
@@ -274,3 +267,9 @@ def deletemanual(id):
         (id,))
     db.commit()
     return redirect(url_for('index.index', id=id))
+
+
+@bp.route('/settings')
+@login_required
+def settings():
+    return render_template('index/settings.html')
