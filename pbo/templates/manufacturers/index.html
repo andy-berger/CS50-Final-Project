@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% if g.user %}
+  <h1>{% block title %}Manufacturers{% endblock %}</h1>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <article class="manufacturer">
+    <div>
+    {% if g.user %}
+    Click the button below to add a manufacturer:<br>
+    <a href="{{ url_for('index.createmanufacturer') }}" class="btn btn-primary">Add</a>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for manufacturer in manufacturers %}
+          <tr>
+            <td>{{ manufacturer['name'] }}</td>
+            <td>
+              <div class="row">
+                <div class="col-auto">
+                  <form action="{{ url_for('index.updatemanufacturer', id=manufacturer['id']) }}">
+                    <input type="submit" class="btn btn-primary btn-sm" value="Edit">
+                  </form>
+                </div>
+                <div class="col-auto">
+                  <!-- Button trigger modal -->
+                  <!-- Button is placed inside a form to place it aligned to the previous form -->
+                  <form>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteEntryModal-{{ manufacturer['id'] }}">Delete</button>
+                  </form>
+                  <!-- Modal -->
+                  <div class="modal fade" id="deleteEntryModal-{{ manufacturer['id'] }}" tabindex="-1" aria-labelledby="deleteEntryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteEntryModalLabel">Are you sure you want to delete manufacturer "{{ manufacturer['name'] }}"?</h5>
+                        </div>
+                        <div class="modal-footer">
+                          <form>
+                            <input type="submit" class="btn btn-secondary me-1" value="No, cancel" data-bs-dismiss="modal">
+                          </form>
+                          <form action="{{ url_for('index.deletemanufacturer', id=manufacturer['id']) }}" method="post">
+                            <input type="submit" class="btn btn-danger" value="Yes, delete">
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      Please <a href="{{ url_for('auth.register') }}">register</a> or <a href="{{ url_for('auth.login') }}">log in</a> to use this tool to manage your personal belongings.
+    {% endif %}
+    </div>
+  </article>
+{% endblock %}

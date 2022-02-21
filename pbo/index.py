@@ -1,3 +1,4 @@
+from dataclasses import is_dataclass
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, send_file
 )
@@ -31,6 +32,20 @@ def get_item(id, check_user=True):
         abort(403)
 
     return item
+
+
+def get_manufacturer(id):
+    manufacturer = get_db().execute(
+        'SELECT id, name'
+        ' FROM manufacturers'
+        ' WHERE id = ?',
+        (id,)
+    ).fetchone()
+
+    if manufacturer is None:
+        abort(404, "Manufacturer id {0} doesn't exist.".format(id))
+
+    return manufacturer
 
 
 def allowed_file(filename):
@@ -294,3 +309,98 @@ def deletemanual(id):
 @login_required
 def settings():
     return render_template('index/settings.html')
+
+
+@bp.route('/manufacturers')
+def manufacturers():
+    db = get_db()
+    manufacturers = db.execute(
+        'SELECT id, name'
+        ' FROM manufacturers'
+        ' WHERE id > 1'
+        ' ORDER BY name'
+    ).fetchall()
+    return render_template('manufacturers/index.html', manufacturers=manufacturers)
+
+
+@bp.route('/createmanufacturer', methods=('GET', 'POST'))
+@login_required
+def createmanufacturer():
+    if request.method == 'POST':
+        name = request.form['name']
+        error = None
+       
+        if not name:
+            error = 'Name is required.'
+
+        if error is not None:
+            flash(error)
+
+        db = get_db()
+        db.execute(
+            'INSERT INTO manufacturers (name)'
+            ' VALUES (?)',
+            (name,)
+        )
+        db.commit()
+        return redirect(url_for('index.manufacturers'))
+
+    return render_template('manufacturers/create.html')
+
+
+@bp.route('/<int:id>/updatemanufacturer', methods=('GET', 'POST'))
+@login_required
+def updatemanufacturer(id):
+    manufacturer = get_manufacturer(id)
+
+    if request.method == 'POST':
+        name = request.form['name']
+        error = None
+
+        if not name:
+            error = 'Name is required.'
+
+        if not id > 1:
+            error = 'Wrong id.'
+
+        if error is not None:
+            flash(error)
+        
+        db = get_db()
+        db.execute(
+            'UPDATE manufacturers SET name = ?'
+            ' WHERE id = ?',
+            (name, id)
+        )
+        db.commit()
+        return redirect(url_for('index.manufacturers'))
+
+    return render_template('manufacturers/update.html', manufacturer=manufacturer)
+
+
+@bp.route('/<int:id>/deletemanufacturer', methods=('POST',))
+@login_required
+def deletemanufacturer(id):
+    db = get_db()
+    manufacturer_ids = db.execute(
+        'SELECT * FROM items WHERE manufacturer_id = ?', (id,)
+    ).fetchall()
+
+    error = None
+
+    print(id)
+    print(len(manufacturer_ids))
+    if len(manufacturer_ids) > 0:
+        error = 'Deletion not possible, manufacturer is in use.'
+
+    if not id > 1:
+        error = 'Wrong id.'
+
+    if error is not None:
+        flash(error)
+        return redirect(url_for('index.manufacturers'))
+
+    db = get_db()
+    db.execute('DELETE FROM manufacturers WHERE id = ?', (id,))
+    db.commit()
+    return redirect(url_for('index.manufacturers'))
