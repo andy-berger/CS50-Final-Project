@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>{% block title %}New room{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    <label for="name">Name</label>
+    <input name="name" id="name" value="{{ request.form['name'] }}" required>
+    <div class="flex-nowrap">
+      <input type="submit" class="btn btn-primary" value="Save">
+      <a href="{{ url_for('rooms.index') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+{% endblock %}
