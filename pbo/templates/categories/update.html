@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h2>{% block title %}Edit "{{ manufacturer['name'] }}"{% endblock %}</h2>
+  <h2>{% block title %}Edit "{{ category['name'] }}"{% endblock %}</h2>
 {% endblock %}
 
 {% block content %}
   <form method="post" enctype="multipart/form-data">
     <label for="name">Name</label>
-    <input name="name" id="name" value="{{ request.form['name'] or manufacturer['name'] }}" required>
+    <input name="name" id="name" value="{{ request.form['name'] or category['name'] }}" required>
     <label for="description">Description</label>
     <div class="flex-nowrap">
       <input type="submit" class="btn btn-primary" value="Save">
-      <a href="{{ url_for('manufacturers.index') }}" class="btn btn-secondary">Cancel</a>
+      <a href="{{ url_for('categories.index') }}" class="btn btn-secondary">Cancel</a>
     </div>
   </form>
 {% endblock %}

@@ -34,4 +34,10 @@ def create_app(test_config=None):
     app.register_blueprint(index.bp)
     app.add_url_rule('/', endpoint='index')
 
+    from . import manufacturers
+    app.register_blueprint(manufacturers.bp)
+
+    from . import categories
+    app.register_blueprint(categories.bp)
+
     return app
