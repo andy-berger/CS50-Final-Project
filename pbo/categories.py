@@ -36,7 +36,7 @@ def index():
         'SELECT id, name'
         ' FROM categories'
         ' WHERE id > 1'
-        ' ORDER BY name'
+        ' ORDER BY name COLLATE NOCASE'
     ).fetchall()
     return render_template('categories/index.html', categories=categories)
 

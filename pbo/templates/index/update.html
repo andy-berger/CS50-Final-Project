@@ -6,7 +6,8 @@
 
 {% block content %}
   <form method="post" enctype="multipart/form-data">
-    <label for="name">Name</label>
+    * Required field
+    <label for="name">Name *</label>
     <input name="name" id="name" value="{{ request.form['name'] or item['name'] }}" required>
     <label for="description">Description</label>
     <input name="description" id="description" value="{{ request.form['description'] or item['description'] }}">

@@ -52,7 +52,7 @@ def index():
     items = db.execute(
         'SELECT i.id, i.name, description, model, manual_filename, created, user_id, username, category_id, c.name AS category_name, r.name AS room_name, m.name AS manufacturer_name'
         ' FROM items i JOIN user u ON i.user_id = u.id JOIN categories c ON category_id = c.id JOIN rooms r ON room_id = r.id JOIN manufacturers m ON manufacturer_id = m.id'
-        ' ORDER BY created DESC'
+        ' ORDER BY i.name COLLATE NOCASE'
     ).fetchall()
     return render_template('index/index.html', items=items, form=form)
 
@@ -109,17 +109,20 @@ def create():
     db = get_db()
     categories = db.execute(
         'SELECT id, name'
-        ' FROM categories',
+        ' FROM categories'
+        ' ORDER BY name COLLATE NOCASE',
     ).fetchall()
 
     rooms = db.execute(
         'SELECT id, name'
-        ' FROM rooms',
+        ' FROM rooms'
+        ' ORDER BY name COLLATE NOCASE',
     ).fetchall()
 
     manufacturers = db.execute(
         'SELECT id, name'
-        ' FROM manufacturers',
+        ' FROM manufacturers'
+        ' ORDER BY name COLLATE NOCASE',
     ).fetchall()
 
     return render_template('index/create.html', categories=categories, rooms=rooms, manufacturers=manufacturers, form=form)
@@ -157,7 +160,8 @@ def update(id):
 
     manufacturers = db.execute(
         'SELECT id, name'
-        ' FROM manufacturers',
+        ' FROM manufacturers'
+        ' ORDER BY name COLLATE NOCASE',
     ).fetchall()
 
     current_manufacturer = db.execute(

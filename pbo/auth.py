@@ -32,7 +32,7 @@ def register():
                 (username, generate_password_hash(password))
             )
             db.commit()
-            return redirect(url_for('auth.login'))
+            return render_template('auth/registrationsuccess.html', username=username)
 
         flash(error)
 
@@ -92,3 +92,42 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+
+@bp.route('/changepassword', methods=('GET', 'POST'))
+@login_required
+def changepassword():
+    if request.method == 'POST':
+        current_password = request.form['current_password']
+        password = request.form['password']
+        confirmation = request.form['confirmation']
+        db = get_db()
+        error = None
+
+        if not current_password:
+            error = 'Current password is required.'
+        elif not password:
+            error = 'New password is required.'
+        elif not confirmation:
+            error = 'Password confirmation is required.'
+        elif not password == confirmation:
+            error = "Passwords don't match."
+
+        current_password_query = db.execute("SELECT password FROM user WHERE id = ?", str(g.user['id'])).fetchone()
+        if not check_password_hash(current_password_query[0], current_password):
+            error = "Current password is incorrect."
+        
+        current_user_query = db.execute("SELECT username FROM user WHERE id = ?", str(g.user['id'])).fetchone()
+        username = current_user_query[0]
+
+        if error is None:
+            db.execute(
+                'UPDATE user SET password = ? WHERE id = ?',
+                (generate_password_hash(password), g.user['id'])
+            )
+            db.commit()
+            return render_template('auth/passwordchangesuccess.html', username=username)
+
+        flash(error)
+
+    return render_template('auth/changepassword.html')

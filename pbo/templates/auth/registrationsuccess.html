@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>{% block title %}Registration successful!{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+User registration was successful, user <b>{{ username }}</b> has been created. Click <a href="{{ url_for('auth.login') }}">here</a> to log in.
+{% endblock %}
