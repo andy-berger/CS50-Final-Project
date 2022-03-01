@@ -5,14 +5,14 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post" enctype="multipart/form-data">
+  <form class="manage-data" method="post" enctype="multipart/form-data">
     * Required field
     <label for="name">Name *</label>
-    <input name="name" id="name" value="{{ request.form['name'] or item['name'] }}" required>
+    <input class="form-control" name="name" id="name" value="{{ request.form['name'] or item['name'] }}" required>
     <label for="description">Description</label>
-    <input name="description" id="description" value="{{ request.form['description'] or item['description'] }}">
+    <input class="form-control" name="description" id="description" value="{{ request.form['description'] or item['description'] }}">
     <label for="category">Category</label>
-    <select name="category" id="categories">
+    <select class="form-control" name="category" id="categories">
       {% for category in categories %}
         {% if (category['id'] == current_category['category_id']) %}
         <option name="category" value="{{ category['id'] }}" placeholder="Uncategorized" type="text" selected>{{ category['name'] }}</option>
@@ -22,7 +22,7 @@
       {% endfor %}
     </select>
     <label for="room">Room</label>
-    <select name="room" id="rooms">
+    <select class="form-control" name="room" id="rooms">
       {% for room in rooms %}
         {% if (room['id'] == current_room['room_id']) %}
         <option name="room" value="{{ room['id'] }}" placeholder="Uncategorized" type="text" selected>{{ room['name'] }}</option>
@@ -32,7 +32,7 @@
       {% endfor %}
     </select>
     <label for="manufacturer">Manufacturer</label>
-    <select name="manufacturer" id="manufacturers">
+    <select class="form-control" name="manufacturer" id="manufacturers">
       {% for manufacturer in manufacturers %}
         {% if (manufacturer['id'] == current_manufacturer['manufacturer_id']) %}
         <option name="manufacturer" value="{{ manufacturer['id'] }}" placeholder="Uncategorized" type="text" selected>{{ manufacturer['name'] }}</option>
@@ -42,7 +42,7 @@
       {% endfor %}
     </select>
     <label for="model">Model</label>
-    <input name="model" id="model" value="{{ request.form['model'] or item['model'] }}">
+    <input class="form-control" name="model" id="model" value="{{ request.form['model'] or item['model'] }}">
     <label for="manual">User manual</label>
     {% if item['manual_filename'] %}
       <span style="white-space: nowrap">Current user manual: <b>{{ item['manual_filename'] }}</b></span>

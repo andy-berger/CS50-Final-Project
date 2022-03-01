@@ -6,13 +6,13 @@
 
 {% block content %}
   * Required field
-  <form method="post" enctype="multipart/form-data">
+  <form class="manage-data" method="post" enctype="multipart/form-data">
     <label for="name">Name *</label>
-    <input name="name" id="name" value="{{ request.form['name'] }}" required>
+    <input class="form-control" name="name" id="name" value="{{ request.form['name'] }}" required>
     <label for="description">Description</label>
-    <input name="description" id="description" value="{{ request.form['description'] }}">
+    <input class="form-control" name="description" id="description" value="{{ request.form['description'] }}">
     <label for="category">Category</label>
-    <select name="category" id="categories">
+    <select class="form-control" name="category" id="categories">
       {% for category in categories %}
         {% if (category['id'] == 1) %}
         <option name="category" value="{{ category['id'] }}" type="text" selected>{{ category['name'] }}</option>
@@ -22,7 +22,7 @@
       {% endfor %}
     </select>
     <label for="room">Room</label>
-    <select name="room" id="rooms">
+    <select class="form-control" name="room" id="rooms">
     {% for room in rooms %}
       {% if (room['id'] == 1) %}
       <option name="room" value="{{ room['id'] }}" type="text" selected>{{ room['name'] }}</option>
@@ -32,7 +32,7 @@
     {% endfor %}
     </select>
     <label for="manufacturer">Manufacturer</label>
-    <select name="manufacturer" id="manufacturers">
+    <select class="form-control" name="manufacturer" id="manufacturers">
     {% for manufacturer in manufacturers %}
       {% if (manufacturer['id'] == 1) %}
       <option name="manufacturer" value="{{ manufacturer['id'] }}" type="text" selected>{{ manufacturer['name'] }}</option>
@@ -42,7 +42,7 @@
     {% endfor %}
     </select>
     <label for="model">Model</label>
-    <input name="model" id="model" value="{{ request.form['model'] }}">
+    <input class="form-control" name="model" id="model" value="{{ request.form['model'] }}">
     <label for="manual">User manual</label>
       {{ form.hidden_tag() }}
       {{ form.file() }}

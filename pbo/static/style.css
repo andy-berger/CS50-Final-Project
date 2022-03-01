@@ -20,9 +20,12 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .item .about { color: slategray; font-style: italic; }
 .item .body { white-space: pre-line; }
 .content:last-child { margin-bottom: 0; }
-.content form { margin: 1em 0; display: flex; flex-direction: column; margin-top: 0; margin-bottom: 0;}
+.content form { margin: 1em 0; display: flex; flex-direction: column; margin-top: 0; margin-bottom: 0; }
 .content label { font-weight: bold; margin-bottom: 0.5em; }
 .content input, .content textarea { margin-bottom: 1em; }
+.content select, .content textarea { margin-bottom: 1em; }
 .content textarea { min-height: 12em; resize: vertical; }
 input[type=submit] { align-self: start; min-width: 4em; }
-a.btn.btn-secondary { max-width: 5em; margin-bottom: 1em; }
+button.btn.btn-primary { margin-bottom: 1em; }
+a.btn.btn-secondary { margin-bottom: 1em; }
+.manage-data { width: 75%; }
