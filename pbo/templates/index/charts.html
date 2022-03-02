@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Charts{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <canvas id="itemsOverTime" width="1500" height="400"></canvas>
+  <script>
+    // setup block
+    var data = {
+      labels: {{ labels_by_time | safe }},
+        datasets: [
+          {
+            label: "Total items in database over time",
+            data: {{ values_by_time | safe }},
+            fill: false,
+            borderColor: "rgb(255, 150, 40)",
+            lineTension: 0.1,
+          }
+        ]
+    };
+
+    // config block
+    var config = {
+      type: "line",
+      data,
+      options: {
+        responsive: false,
+        scales: {
+          y: {
+            min: 0,
+            ticks: {
+              stepSize: 1
+            }
+          },
+        }
+      }
+    };
+
+    // render block
+    var lineChart = new Chart(
+      document.getElementById("itemsOverTime"),
+      config
+    );
+  </script>
+  <canvas id="itemsPerManufacturer" width="600" height="400"></canvas>
+  <script>
+    // randomly determine background colors
+    var labels = {{ labels_by_manufacturer | safe }}
+    var backgroundColor = [];
+    for (i = 0; i < labels.length; i++) {
+      var r = Math.floor(Math.random() * 255);
+      var g = Math.floor(Math.random() * 255);
+      var b = Math.floor(Math.random() * 255);
+      backgroundColor.push('rgba('+r+', '+g+', '+b+', 1)');
+    }
+
+    // setup block
+    var data = {
+      labels: labels,
+        datasets: [
+          {
+            data: {{ values_by_manufacturer | safe }},
+            backgroundColor: backgroundColor,
+          }
+        ]
+    };
+
+    // config block
+    var config = {
+      type: "pie",
+      data,
+      options: {
+        responsive: false,
+        plugins: {
+          legend: {
+            position: "bottom",
+          },
+          title: {
+            display: true,
+            text: "Items in database per manufacturer"
+          }
+        }
+      }
+    };
+
+    // render block
+    var pieChart = new Chart(
+      document.getElementById("itemsPerManufacturer"),
+      config
+    );
+  </script>
+  <canvas id="itemsPerCategory" width="600" height="400"></canvas>
+  <script>
+    // randomly determine background colors
+    var labels = {{ labels_by_category | safe }}
+    var backgroundColor = [];
+    for (i = 0; i < labels.length; i++) {
+      var r = Math.floor(Math.random() * 255);
+      var g = Math.floor(Math.random() * 255);
+      var b = Math.floor(Math.random() * 255);
+      backgroundColor.push('rgba('+r+', '+g+', '+b+', 1)');
+    }
+
+    // setup block
+    var data = {
+      labels: labels,
+        datasets: [
+          {
+            data: {{ values_by_category | safe }},
+            backgroundColor: backgroundColor,
+          }
+        ]
+    };
+
+    // config block
+    var config = {
+      type: "pie",
+      data,
+      options: {
+        responsive: false,
+        plugins: {
+          legend: {
+            position: "bottom",
+          },
+          title: {
+            display: true,
+            text: "Items in database per category"
+          }
+        }
+      }
+    };
+
+    // render block
+    var pieChart = new Chart(
+      document.getElementById("itemsPerCategory"),
+      config
+    );
+  </script>
+  <canvas id="itemsPerRoom" width="600" height="400"></canvas>
+  <script>
+    // randomly determine background colors
+    var labels = {{ labels_by_room | safe }}
+    var backgroundColor = [];
+    for (i = 0; i < labels.length; i++) {
+      var r = Math.floor(Math.random() * 255);
+      var g = Math.floor(Math.random() * 255);
+      var b = Math.floor(Math.random() * 255);
+      backgroundColor.push('rgba('+r+', '+g+', '+b+', 1)');
+    }
+
+    // setup block
+    var data = {
+      labels: labels,
+        datasets: [
+          {
+            data: {{ values_by_room | safe }},
+            backgroundColor: backgroundColor,
+          }
+        ]
+    };
+
+    // config block
+    var config = {
+      type: "pie",
+      data,
+      options: {
+        responsive: false,
+        plugins: {
+          legend: {
+            position: "bottom",
+          },
+          title: {
+            display: true,
+            text: "Items in database per room"
+          }
+        }
+      }
+    };
+
+    // render block
+    var pieChart = new Chart(
+      document.getElementById("itemsPerRoom"),
+      config
+    );
+  </script>
+{% endblock %}

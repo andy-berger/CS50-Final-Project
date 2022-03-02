@@ -299,3 +299,78 @@ def deletemanual(id):
 @login_required
 def settings():
     return render_template('index/settings.html')
+
+
+@bp.route('/charts')
+@login_required
+def charts():
+    db = get_db()
+    # Get data for analysis on items added per day
+    data_by_time_query = db.execute(
+        'SELECT COUNT(name) AS amount, strftime("%Y-%m-%d", created) AS day'
+        ' FROM items'
+        ' GROUP BY strftime("%Y-%m-%d", created)'
+    ).fetchall()
+
+    # Calculate how many items were in the database by date
+    data_by_time = []
+    total_amount = 0
+    for item in data_by_time_query:
+        total_amount += item['amount']
+        data_by_time.append((item['day'], total_amount))
+
+    labels_by_time = [row[0] for row in data_by_time]
+    values_by_time = [row[1] for row in data_by_time]
+
+    # Get data for analysis on items per manufacturer
+    data_by_manufacturer_query = db.execute(
+        'SELECT COUNT(i.name) AS amount, m.name AS manufacturer_name'
+        ' FROM items i JOIN manufacturers m on manufacturer_id = m.id'
+        ' GROUP BY manufacturer_name'
+        ' ORDER BY manufacturer_name COLLATE NOCASE'
+    ).fetchall()
+
+    data_by_manufacturer = []
+    for element in data_by_manufacturer_query:
+        manufacturer = element['manufacturer_name']
+        amount = element['amount']
+        data_by_manufacturer.append((manufacturer, amount))
+    
+    labels_by_manufacturer = [row[0] for row in data_by_manufacturer]
+    values_by_manufacturer = [row[1] for row in data_by_manufacturer]
+
+    # Get data for analysis on items per category
+    data_by_category_query = db.execute(
+        'SELECT COUNT(i.name) AS amount, m.name AS category_name'
+        ' FROM items i JOIN categories m on category_id = m.id'
+        ' GROUP BY category_name'
+        ' ORDER BY category_name COLLATE NOCASE'
+    ).fetchall()
+
+    data_by_category = []
+    for element in data_by_category_query:
+        category = element['category_name']
+        amount = element['amount']
+        data_by_category.append((category, amount))
+    
+    labels_by_category = [row[0] for row in data_by_category]
+    values_by_category = [row[1] for row in data_by_category]
+
+    # Get data for analysis on items per room
+    data_by_room_query = db.execute(
+        'SELECT COUNT(i.name) AS amount, m.name AS room_name'
+        ' FROM items i JOIN rooms m on room_id = m.id'
+        ' GROUP BY room_name'
+        ' ORDER BY room_name COLLATE NOCASE'
+    ).fetchall()
+
+    data_by_room = []
+    for element in data_by_room_query:
+        room = element['room_name']
+        amount = element['amount']
+        data_by_room.append((room, amount))
+    
+    labels_by_room = [row[0] for row in data_by_room]
+    values_by_room = [row[1] for row in data_by_room]
+
+    return render_template('index/charts.html', labels_by_time=labels_by_time, values_by_time=values_by_time, labels_by_manufacturer=labels_by_manufacturer, values_by_manufacturer=values_by_manufacturer, labels_by_category=labels_by_category, values_by_category=values_by_category, labels_by_room=labels_by_room, values_by_room=values_by_room)
