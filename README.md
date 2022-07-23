@@ -1,5 +1,10 @@
 # Personal Belongings Organizer
 
+## Screenshots
+
+![Screenshot](/ui.png?raw=true "UI Screenshot")
+![Screenshot](/charts.png?raw=true "Charts Screenshot")
+
 ## Overview
 
 Personal Belongings Organizer (pbo) is a web-based tool to organize all your personal belongings.
